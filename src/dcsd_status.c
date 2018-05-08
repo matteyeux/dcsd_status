@@ -4,8 +4,14 @@
 #include <ftdi.h>
 
 #include <libusb-1.0/libusb.h>
-#include <include/dcsd_checker.h>
+#include <include/dcsd_status.h>
 
+/* function to return state of device :
+ * 1 : normal mode
+ * 2 : recovery mode
+ * 3 : DFU/WTF mode
+ * 0 : idk yet
+*/
 int device_mode(void) {
 	static struct libusb_device_handle *device = NULL;
 	static int devicemode = -1;
@@ -42,6 +48,12 @@ int device_mode(void) {
 	return 0;
 }
 
+/* function used to set leds on DCSD cable
+ * normal mode : green
+ * recovery mode : yellow
+ * DFU/WTF mode : red
+ * other : all leds are off
+*/
 int set_led(int led){
 	struct ftdi_context *ftdi;
 	int f;
@@ -54,7 +66,8 @@ int set_led(int led){
 		fprintf(stderr, "ftdi_new failed\n");
 		return -1;
 	}
-
+	/* 0x0403 : vendor ID */
+	/* 0x8a88 : product ID*/
 	f = ftdi_usb_open(ftdi, 0x0403, 0x8a88);
 
 	if (f < 0 && f != -5){

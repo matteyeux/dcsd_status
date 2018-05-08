@@ -5,7 +5,7 @@ CFLAGS = -c -Wall -I. -I/usr/local/include/libftdi1 -g -o
 LDFLAGS = -L/usr/local/lib -lusb-1.0 -lftdi1
 SRC = src
 
-OBJECTS = src/main.o src/dcsd_status.o
+OBJECTS = src/main.o src/dcsd_status.o src/deamon.o
 
 all : $(TARGET)
 
