@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ftdi.h>
-
+#include <unistd.h>
 #include <libusb-1.0/libusb.h>
 #include <include/dcsd_status.h>
 
@@ -21,28 +21,28 @@ int device_mode(void) {
 	devicemode = NORM_MODE;
 	device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, devicemode);
 	if (device != NULL){
-		printf("normal\n");
+		fprintf(stdout, "normal\n");
 		return 1;
 	}
 
 	devicemode = RECV_MODE;
 	device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, devicemode);
 	if (device != NULL){
-		printf("recovery\n");
+		fprintf(stdout, "recovery\n");
 		return 2;
 	}
 
 	devicemode = WTF_MODE;
 	device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, devicemode);
 	if (device != NULL){
-		printf("dfu\n");
+		fprintf(stdout, "dfu\n");
 		return 3;
 	}
 
 	devicemode = DFU_MODE;
 	device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, devicemode);
 	if (device != NULL){
-		printf("dfu dfu\n");
+		fprintf(stdout, "dfu\n");
 		return 3;
 	}
 	return 0;
@@ -53,15 +53,16 @@ int device_mode(void) {
  * recovery mode : yellow
  * DFU/WTF mode : red
  * other : all leds are off
+ * reset : all led are on
 */
 int set_led(int led){
 	struct ftdi_context *ftdi;
 	int f;
-	long int tab[4] = {0xF0, 0xF2, 0xF8, 0xF1};
+	long int tab[5] = {0xF0, 0xF2, 0xF8, 0xF1, 0xFB};
 	unsigned char buf[1];
-	
+
 	ftdi = ftdi_new();
-	
+
 	if (ftdi == 0){
 		fprintf(stderr, "ftdi_new failed\n");
 		return -1;
@@ -70,11 +71,13 @@ int set_led(int led){
 	/* 0x8a88 : product ID*/
 	f = ftdi_usb_open(ftdi, 0x0403, 0x8a88);
 
-	if (f < 0 && f != -5){
+	while (f < 0){
+		f = ftdi_usb_open(ftdi, 0x0403, 0x8a88);
 		fprintf(stderr, "unable to open ftdi device: %d (%s)\n", f, ftdi_get_error_string(ftdi));
-		ftdi_free(ftdi);
-		exit(-1);
+		printf("waiting...\n");
+		sleep(1);
 	}
+
 	printf("ftdi open succeeded: %d\n",f);
 
 	f = ftdi_set_bitmode(ftdi, tab[led], BITMODE_CBUS);
