@@ -60,6 +60,16 @@ int set_led(int led){
 	int f;
 	long int tab[5] = {0xF0, 0xF2, 0xF8, 0xF1, 0xFB};
 	unsigned char buf[1];
+	static int led_status = 0;
+
+	if (led == led_status)
+	{
+		fprintf(stdout, "state is unchanged, not doing anything\n");
+		return 0;
+	} else {
+		led_status = led;
+	}
+
 
 	ftdi = ftdi_new();
 
