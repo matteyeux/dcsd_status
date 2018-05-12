@@ -11,7 +11,7 @@ ifeq ($(shell uname), Linux)
 endif
 
 ifeq ($(shell uname), Darwin)
-	CFLAGS += -c -Wall -I. -I/usr/local/Cellar/libftdi/1.4/include/libftdi1/ -g 
+	CFLAGS += -c -Wall -I. -I/usr/local/Cellar/libftdi/1.4/include/libftdi1/ -g -o
 	LDFLAGS += -L/usr/local/Cellar/libftdi/1.4/lib -L/usr/local/Cellar/libusb/1.0.22/lib -lftdi1 -lusb-1.0
 endif
 
@@ -23,7 +23,7 @@ $(TARGET) : $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@ $(LDFLAGS)
 
 src/%.o : src/%.c
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) $@ $<
 
 clean : 
 	rm -rf $(OBJECTS) $(TARGET)
