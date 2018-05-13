@@ -15,7 +15,7 @@ bool file_exists(const char* file){
 	}
 }
 
-/* simple function to run our tool as a deamon */
+/* simple function to run the tool as a deamon */
 int deamonize(const char *pidfile){
 	pid_t process_id = 0;
 	pid_t sid = 0;
@@ -48,7 +48,7 @@ int deamonize(const char *pidfile){
 	if (process_id > 0)
 	{
 		fp = fopen(pidfile, "a+");
-		printf("[i] PID %d\r", process_id);
+		fprintf(stdout, "[i] PID %d\r", process_id);
 		fprintf(fp, "%d\n",process_id);
 		fclose(fp);
 		/* return success in exit status */
@@ -65,10 +65,15 @@ int deamonize(const char *pidfile){
 		exit(1);
 	}
 
+
+#ifdef DEBUG
+	fprintf(stdout, "[i] debug mode\n");
+#else
 	/* Close stdin. stdout and stderr */
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
+#endif
 
 	return 0;
 }
