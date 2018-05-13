@@ -33,4 +33,5 @@ Run `make` <br>
 You can enable debugging mode when runnning make with `DEBUG` flag : `make DEBUG=1`
 
 ## Known issues
-iDevices are not recognized on macOS High Sierra due to [libusb](https://github.com/libusb/libusb/issues/290). Check [#1](https://github.com/matteyeux/dcsd_status/issues/1)
+iDevices are not recognized on macOS High Sierra due to [libusb](https://github.com/libusb/libusb/issues/290). Check [#1](https://github.com/matteyeux/dcsd_status/issues/1). <br>
+You can apply [this patch](https://github.com/matteyeux/dcsd_status/blob/master/libusb.patch) to fix libusb, or use [my fork](https://github.com/matteyeux/libusb.git).
