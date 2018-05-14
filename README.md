@@ -1,5 +1,7 @@
 # dcsd_status
-Switch on the LED corresponding to the Apple device status (Normal/Recovery/DFU)
+Switch on the LED corresponding to the Apple device status (Normal/Recovery/DFU) 
+
+[demo](https://youtu.be/BreVZON1wdE)
 
 ## Usage 
 ```
