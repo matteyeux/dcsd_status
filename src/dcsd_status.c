@@ -18,7 +18,14 @@ int device_mode(void) {
 
 	libusb_init(NULL);
 	
-	devicemode = NORM_MODE;
+	devicemode = IPHONE_NORM_MODE;
+	device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, devicemode);
+	if (device != NULL){
+		fprintf(stdout, "[i] state : normal\n");
+		return 1;
+	}
+
+	devicemode = IPAD_NORM_MODE;
 	device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, devicemode);
 	if (device != NULL){
 		fprintf(stdout, "[i] state : normal\n");
