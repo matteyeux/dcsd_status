@@ -7,7 +7,7 @@ DEBUG ?=
 SRC = src
 
 ifeq ($(shell uname), Linux)
-	CFLAGS += -c -Wall -I. -I/usr/local/include/libftdi1 -g
+	CFLAGS += -c -Wall -I. -I/usr/include/libftdi1
 	LDFLAGS += -L/usr/local/lib -lusb-1.0 -lftdi1
 endif
 
