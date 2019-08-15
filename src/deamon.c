@@ -7,7 +7,8 @@
 #include <sys/stat.h>
 
 /* name is obvious*/
-bool file_exists(const char* file){
+bool file_exists(const char* file)
+{
 	if(access(file, F_OK ) != -1) {
 		return true;
 	} else {
@@ -16,7 +17,8 @@ bool file_exists(const char* file){
 }
 
 /* simple function to run the tool as a deamon */
-int deamonize(const char *pidfile){
+int deamonize(const char *pidfile)
+{
 	pid_t process_id = 0;
 	pid_t sid = 0;
 	char *pid_val = NULL;
@@ -24,8 +26,7 @@ int deamonize(const char *pidfile){
 
 	FILE *fp = NULL;
 
-	if (file_exists(pidfile))
-	{
+	if (file_exists(pidfile)) {
 		fp = fopen(pidfile, "r");
 		fprintf(stdout, "[-] dcsd_status is already running\n");
 		getline(&pid_val, &len, fp);
@@ -38,15 +39,13 @@ int deamonize(const char *pidfile){
 	process_id = fork();
 
 	/* check if fork() failed */
-	if (process_id < 0)
-	{
+	if (process_id < 0) {
 		perror("fork");
 		exit(1);
 	}
 
 	/* PARENT PROCESS. Let's kill it. */
-	if (process_id > 0)
-	{
+	if (process_id > 0) {
 		fp = fopen(pidfile, "a+");
 		fprintf(stdout, "[i] PID %d\r", process_id);
 		fprintf(fp, "%d\n",process_id);
@@ -60,8 +59,7 @@ int deamonize(const char *pidfile){
 
 	/* set new session */
 	sid = setsid();
-	if(sid < 0)
-	{
+	if(sid < 0) {
 		exit(1);
 	}
 
@@ -78,16 +76,19 @@ int deamonize(const char *pidfile){
 	return 0;
 }
 
-int get_instance_pid(const char *file){
+int get_instance_pid(const char *file)
+{
 	FILE *fp = NULL;
 	char *pid_val = NULL;
 	size_t len = 0;
 
 	fp = fopen(file, "r");
+
 	/* check if we can access file */
-	if (fp == NULL){
+	if (fp == NULL) {
 		return -1;
 	}
+
 	/* get the first line of the file which is PID */
 	getline(&pid_val, &len, fp);
 	fclose(fp);

@@ -7,7 +7,8 @@
 #include <include/dcsd_status.h>
 #include <include/deamon.h>
 
-void usage(const char *toolname){
+void usage(const char *toolname)
+{
 	fprintf(stdout, "usage : %s [OPTIONS]\n", toolname);
 	fprintf(stdout, " -s\tstop deamon\n");
 	fprintf(stdout, " -n\tno daemon\n");
@@ -22,21 +23,20 @@ int main(int argc, char const *argv[])
 	int dcsd_status_pid = 0;
 
 	for(int i = 0; i < argc; i++) {
-		if (!strcmp(argv[i], "-s"))
-		{
+		if (!strcmp(argv[i], "-s")) {
 			stop = 1;
-		} else if (!strcmp(argv[i], "-r")){
+		} else if (!strcmp(argv[i], "-r")) {
 			set_led(4);
 			return 0;
-		} else if (!strcmp(argv[i], "-n")){
+		} else if (!strcmp(argv[i], "-n")) {
 			no_deamon = 1;
-		} else if (!strcmp(argv[i], "-h")){
+		} else if (!strcmp(argv[i], "-h")) {
 			usage(argv[0]);
 			return 0;
 		}
 	}
 
-	if (stop){
+	if (stop) {
 		dcsd_status_pid = get_instance_pid(pidfile);
 
 		/* No need to kill something that does not exist*/
@@ -55,7 +55,7 @@ int main(int argc, char const *argv[])
 	}
 	else {
 		deamonize(pidfile);
-		while(1){
+		while(1) {
 			set_led(device_mode());
 			sleep(1);
 		}
