@@ -19,8 +19,8 @@ void usage(const char *toolname)
 int main(int argc, char const *argv[])
 {
 	const char *pidfile = "dcsd_status.pid";
-	int stop = 0, no_deamon = 0;
-	int dcsd_status_pid = 0;
+	int stop = 0, no_daemon = 0;
+	int dcsd_status_pid = 0, killer = -1;
 
 	for(int i = 0; i < argc; i++) {
 		if (!strcmp(argv[i], "-s")) {
@@ -29,7 +29,7 @@ int main(int argc, char const *argv[])
 			set_led(4);
 			return 0;
 		} else if (!strcmp(argv[i], "-n")) {
-			no_deamon = 1;
+			no_daemon = 1;
 		} else if (!strcmp(argv[i], "-h")) {
 			usage(argv[0]);
 			return 0;
@@ -44,16 +44,23 @@ int main(int argc, char const *argv[])
 			return 0;
 
 		printf("%d\n", dcsd_status_pid);
+
+		killer = kill(dcsd_status_pid, SIGINT);
+		if (killer == -1) {
+			printf("[e] unable to stop dcsd_status\n");
+			return -1;
+		}
+
 		remove(pidfile);
-		kill(dcsd_status_pid, SIGINT);
 		printf("[i] stopped\n");
+
 		return 0;
 	}
 
-	if (no_deamon) {
+	if (no_daemon) {
 		set_led(device_mode());
 	} else {
-		deamonize(pidfile);
+		daemonize(pidfile);
 		while(1) {
 			set_led(device_mode());
 			sleep(1);
