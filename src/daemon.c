@@ -17,7 +17,7 @@ bool file_exists(const char* file)
 }
 
 /* simple function to run the tool as a deamon */
-int deamonize(const char *pidfile)
+int daemonize(const char *pidfile)
 {
 	pid_t process_id = 0;
 	pid_t sid = 0;
