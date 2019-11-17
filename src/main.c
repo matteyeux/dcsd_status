@@ -43,7 +43,7 @@ int main(int argc, char const *argv[])
 		if (dcsd_status_pid == -1)
 			return 0;
 
-		printf("%d\n", dcsd_status_pid);
+		printf("[pid] %d\n", dcsd_status_pid);
 
 		killer = kill(dcsd_status_pid, SIGINT);
 		if (killer == -1) {
