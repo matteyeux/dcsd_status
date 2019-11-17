@@ -33,6 +33,8 @@ int daemonize(const char *pidfile)
 		getline(&pid_val, &len, fp);
 
 		fprintf(stdout, "[i] PID = %s\r", pid_val);
+
+		free(pid_val);
 		fclose(fp);
 		exit(-1);
 	}
@@ -81,7 +83,8 @@ int daemonize(const char *pidfile)
 int get_instance_pid(const char *file)
 {
 	FILE *fp = NULL;
-	char *pid_val = NULL;
+	char *line = NULL;
+	int pid = 0;
 	size_t len = 0;
 
 	fp = fopen(file, "r");
@@ -93,9 +96,13 @@ int get_instance_pid(const char *file)
 	}
 
 	/* get the first line of the file which is PID */
-	getline(&pid_val, &len, fp);
+	getline(&line, &len, fp);
 	fclose(fp);
 
+	pid = atoi(line);
+	free(line);
+
 	/* return PID of server */
-	return atoi(pid_val);
+	return pid;
 }
+

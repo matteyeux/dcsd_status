@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
 	int stop = 0, no_daemon = 0;
 	int dcsd_status_pid = 0, killer = -1;
 
-	for(int i = 0; i < argc; i++) {
+	for (int i = 0; i < argc; i++) {
 		if (!strcmp(argv[i], "-s")) {
 			stop = 1;
 		} else if (!strcmp(argv[i], "-r")) {

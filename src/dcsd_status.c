@@ -55,7 +55,7 @@ int device_mode(void)
 int set_led(int led)
 {
 	struct ftdi_context *ftdi;
-	int f;
+	int f = 0;
 	long int tab[5] = {0xF0, 0xF2, 0xF8, 0xF1, 0xFB};
 	unsigned char buf[1];
 	static int led_status = -1;
