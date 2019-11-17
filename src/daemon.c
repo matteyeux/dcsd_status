@@ -28,8 +28,10 @@ int deamonize(const char *pidfile)
 
 	if (file_exists(pidfile)) {
 		fp = fopen(pidfile, "r");
+
 		fprintf(stdout, "[-] dcsd_status is already running\n");
 		getline(&pid_val, &len, fp);
+
 		fprintf(stdout, "[i] PID = %s\r", pid_val);
 		fclose(fp);
 		exit(-1);
