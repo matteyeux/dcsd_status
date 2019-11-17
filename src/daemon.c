@@ -17,7 +17,7 @@ bool file_exists(const char* file)
 }
 
 /* simple function to run the tool as a deamon */
-int deamonize(const char *pidfile)
+int daemonize(const char *pidfile)
 {
 	pid_t process_id = 0;
 	pid_t sid = 0;
@@ -28,8 +28,10 @@ int deamonize(const char *pidfile)
 
 	if (file_exists(pidfile)) {
 		fp = fopen(pidfile, "r");
+
 		fprintf(stdout, "[-] dcsd_status is already running\n");
 		getline(&pid_val, &len, fp);
+
 		fprintf(stdout, "[i] PID = %s\r", pid_val);
 		fclose(fp);
 		exit(-1);
@@ -86,6 +88,7 @@ int get_instance_pid(const char *file)
 
 	/* check if we can access file */
 	if (fp == NULL) {
+		fprintf(stderr, "[e] could not open %s\n", file);
 		return -1;
 	}
 

@@ -11,49 +11,38 @@
  * 2 : recovery mode
  * 3 : DFU/WTF mode
  * 0 : idk yet
+ * TODO:
+ * WTF mode may not be needed anymore as it is DFU
+ * just replace DFU PID value with with WTF value
 */
 int device_mode(void)
 {
-	static struct libusb_device_handle *device = NULL;
-	static int devicemode = -1;
+	struct libusb_device_handle *device = NULL;
+	int ret = 0;
+	int device_state[5] = {IPHONE_NORM_MODE, IPAD_NORM_MODE, RECV_MODE, WTF_MODE, DFU_MODE};
+	static char *device_status[] = {NULL, "normal", "recovery", "dfu", "unknown"};
 
 	libusb_init(NULL);
-	
-	devicemode = IPHONE_NORM_MODE;
-	device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, devicemode);
-	if (device != NULL) {
-		fprintf(stdout, "[i] state : normal\n");
-		return 1;
+
+	/*
+	* in this loop we check the current state
+	* of the device
+	*/
+	for (int i = 0; i < 5; i++) {
+		device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, device_state[i]);
+		if (device != NULL) {
+			if (i == 0)
+				i += 1;
+			ret = i;
+			fprintf(stdout, "[i] state : %s\n", device_status[i]); break;
+			break;
+		}
 	}
 
-	devicemode = IPAD_NORM_MODE;
-	device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, devicemode);
-	if (device != NULL) {
-		fprintf(stdout, "[i] state : normal\n");
-		return 1;
-	}
+	if (device != NULL) libusb_release_interface(device, 0);
+	libusb_exit(0);
 
-	devicemode = RECV_MODE;
-	device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, devicemode);
-	if (device != NULL) {
-		fprintf(stdout, "[i] state : recovery\n");
-		return 2;
-	}
-
-	devicemode = WTF_MODE;
-	device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, devicemode);
-	if (device != NULL) {
-		fprintf(stdout, "[i] state : dfu\n");
-		return 3;
-	}
-
-	devicemode = DFU_MODE;
-	device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, devicemode);
-	if (device != NULL) {
-		fprintf(stdout, "[i] state : dfu\n");
-		return 3;
-	}
-	return 0;
+	return ret;
 }
 
 /* function used to set leds on DCSD cable
