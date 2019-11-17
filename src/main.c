@@ -5,7 +5,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <include/dcsd_status.h>
-#include <include/deamon.h>
+#include <include/daemon.h>
 
 void usage(const char *toolname)
 {
@@ -52,13 +52,13 @@ int main(int argc, char const *argv[])
 
 	if (no_deamon) {
 		set_led(device_mode());
-	}
-	else {
+	} else {
 		deamonize(pidfile);
 		while(1) {
 			set_led(device_mode());
 			sleep(1);
 		}
 	}
+
 	return 0;
 }
