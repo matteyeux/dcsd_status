@@ -9,7 +9,7 @@ OBJECTS = $(SRC:.c=.o)
 
 ifeq ($(shell uname), Linux)
 	CFLAGS += -c -Wall -I. -I/usr/include/libftdi1
-	LDFLAGS += -L/usr/local/lib -lusb-1.0 -lftdi1
+	LDFLAGS += -lusb-1.0 -lftdi1
 endif
 
 ifeq ($(shell uname), Darwin)
