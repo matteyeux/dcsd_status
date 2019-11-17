@@ -88,6 +88,7 @@ int get_instance_pid(const char *file)
 
 	/* check if we can access file */
 	if (fp == NULL) {
+		fprintf(stderr, "[e] could not open %s\n", file);
 		return -1;
 	}
 
