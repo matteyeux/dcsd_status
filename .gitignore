@@ -1,3 +1,4 @@
 dcsd_status
 src/*.o
 dcsd_status.pid
+core
