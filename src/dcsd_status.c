@@ -11,6 +11,9 @@
  * 2 : recovery mode
  * 3 : DFU/WTF mode
  * 0 : idk yet
+ * TODO:
+ * WTF mode may not be needed anymore as it is DFU
+ * just replace DFU PID value with with WTF value
 */
 int device_mode(void)
 {
@@ -21,21 +24,25 @@ int device_mode(void)
 
 	libusb_init(NULL);
 
+	/*
+	* in this loop we check the current state
+	* of the device
+	*/
 	for (int i = 0; i < 5; i++) {
 		device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, device_state[i]);
 		if (device != NULL) {
-			if (i == 1 || i == 4)
+			if (i == 0)
 				i += 1;
-			fprintf(stdout, "[i] state : %s\n", device_status[i]); break;
 			ret = i;
-			goto out;
+			fprintf(stdout, "[i] state : %s\n", device_status[i]); break;
+			break;
 		}
 	}
 
-out:
-		if (device != NULL) libusb_release_interface(device, 0);
-		libusb_exit(0);
-		return ret;
+	if (device != NULL) libusb_release_interface(device, 0);
+	libusb_exit(0);
+
+	return ret;
 }
 
 /* function used to set leds on DCSD cable
