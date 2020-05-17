@@ -39,7 +39,8 @@ int device_mode(void)
 		}
 	}
 
-	if (device != NULL) libusb_release_interface(device, 0);
+	if (device != NULL)
+		libusb_release_interface(device, 0);
 	libusb_exit(0);
 
 	return ret;
@@ -56,6 +57,7 @@ int set_led(int led)
 {
 	struct ftdi_context *ftdi;
 	int f;
+	int ret = 0;
 	long int tab[5] = {0xF0, 0xF2, 0xF8, 0xF1, 0xFB};
 	unsigned char buf[1];
 	static int led_status = -1;
@@ -91,27 +93,23 @@ int set_led(int led)
 
 	if (f < 0) {
 		fprintf(stderr, "[e] set_bitmode failed for 0x%ld, error %d (%s)\n", tab[led], f, ftdi_get_error_string(ftdi));
-		ftdi_usb_close(ftdi);
-		ftdi_free(ftdi);
-		exit(-1);
+		ret = -1;
+		goto end;
 	}
 
 	f = ftdi_read_pins(ftdi, &buf[0]);
 
 	if (f < 0) {
 		fprintf(stderr, "[e] read_pins failed, error %d (%s)\n", f, ftdi_get_error_string(ftdi));
-		ftdi_usb_close(ftdi);
-		ftdi_free(ftdi);
-		exit(-1);
+		ret = -1;
+		goto end;
 	}
 
 	printf("0x%01x\n", buf[0] & 0x0f);
 
-	//printf("disabling bitbang mode\n");
-	//ftdi_disable_bitbang(ftdi);
-
+end:
 	ftdi_usb_close(ftdi);
 	ftdi_free(ftdi);
 
-	return 0;
+	return ret;
 }

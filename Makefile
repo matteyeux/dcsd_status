@@ -8,8 +8,8 @@ SRC = $(wildcard src/*.c)
 OBJECTS = $(SRC:.c=.o)
 
 ifeq ($(shell uname), Linux)
-	CFLAGS += -c -Wall -I. -I/usr/include/libftdi1
-	LDFLAGS += -lusb-1.0 -lftdi1
+	CFLAGS += -c -Wall -I.
+	LDFLAGS += -lusb-1.0 -lftdi
 endif
 
 ifeq ($(shell uname), Darwin)
