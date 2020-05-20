@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include <string.h>
 #include <ftdi.h>
 #include <unistd.h>
 #include <libusb-1.0/libusb.h>
 #include <include/dcsd_status.h>
+
 
 /* function to return state of device :
  * 1 : normal mode
@@ -17,10 +18,13 @@
 */
 int device_mode(void)
 {
-	struct libusb_device_handle *device = NULL;
+	libusb_device_handle *dev = NULL;
 	int ret = 0;
+	char serial_number[256];
+	struct libusb_device_descriptor desc;
+
 	int device_state[5] = {IPHONE_NORM_MODE, IPAD_NORM_MODE, RECV_MODE, WTF_MODE, DFU_MODE};
-	static char *device_status[] = {NULL, "normal", "recovery", "dfu", "unknown"};
+	static char *device_status[] = {NULL, "normal", "recovery", "dfu", "pwnd", "unknown"};
 
 	libusb_init(NULL);
 
@@ -28,9 +32,9 @@ int device_mode(void)
 	* in this loop we check the current state
 	* of the device
 	*/
-	for (int i = 0; i < 5; i++) {
-		device = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, device_state[i]);
-		if (device != NULL) {
+	for (int i = 0; i < 6; i++) {
+		dev = libusb_open_device_with_vid_pid(NULL, VENDOR_ID, device_state[i]);
+		if (dev != NULL) {
 			if (i == 0)
 				i += 1;
 			ret = i;
@@ -39,8 +43,21 @@ int device_mode(void)
 		}
 	}
 
-	if (device != NULL)
-		libusb_release_interface(device, 0);
+	if (ret == 3) {
+		libusb_device *device = NULL;
+
+		device = libusb_get_device(dev);
+		libusb_get_device_descriptor(device, &desc);
+		libusb_get_string_descriptor_ascii(dev, desc.iSerialNumber,
+                                           (unsigned char *)serial_number,
+                                           sizeof(serial_number));
+
+		if (strstr(serial_number, "PWND"))
+			ret = 4;
+	}
+
+	if (dev != NULL)
+		libusb_release_interface(dev, 0);
 	libusb_exit(0);
 
 	return ret;
@@ -58,7 +75,7 @@ int set_led(int led)
 	struct ftdi_context *ftdi;
 	int f;
 	int ret = 0;
-	long int tab[5] = {0xF0, 0xF2, 0xF8, 0xF1, 0xFB};
+	long int tab[6] = {0xF0, 0xF2, 0xF8, 0xF1, 0xF3, 0xFB};
 	unsigned char buf[1];
 	static int led_status = -1;
 
